@@ -34,24 +34,27 @@ title: Parken in Paderborn
             xhr.onreadystatechange = function()
             {
                 if (xhr.readyState== 4 && xhr.status == 200){
-                    document.getElementById("content").innerHTML = xhr.responseText;
-                    var tableString = "<table>";
-                    array = $.csv.toArrays(xhr.responseText);
+                    var array = JSON.parse(xhr.responseText);
+                    var tableString = "<table>"
+                    tableString = tableString.concat("<th>_id</th>");
+                    tableString = tableString.concat("<th>name</th>");
+                    tableString = tableString.concat("<th>timestamp</th>");
+                    tableString = tableString.concat("<th>free</th>");
+                    tableString = tableString.concat("<th>count</th>");
                     for (var i = 0; i < array.length; i++) {
-                        innerArray = array[i];
                         tableString = tableString.concat("<tr>");
-                        for (var j = 0; j < innerArray.length; j++){
-                            tableString = tableString.concat("<td>");
-                            tableString = tableString.concat(innerArray[j]);
-                            tableString = tableString.concat("</td>");
-                        }
+                        tableString = tableString.concat("<td>" + array[i]._id + "</td>");
+                        tableString = tableString.concat("<td>" + array[i].name + "</td>");
+                        tableString = tableString.concat("<td>" + array[i].timestamp + "</td>");
+                        tableString = tableString.concat("<td>" + array[i].free + "</td>");
+                        tableString = tableString.concat("<td>" + array[i].count + "</td>");
                         tableString = tableString.concat("</tr>");
                     }
                     tableString = tableString.concat("</table>");
                     document.getElementById("content").innerHTML = tableString;
                 }
             }
-            xhr.open("GET", "newest.csv", true);
+            xhr.open("GET", "newest.json", true);
             xhr.send(null);
         }
         function initOsm(){
