@@ -1,0 +1,101 @@
+---
+title: Parken in Paderborn
+---
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <title>Parken in Paderborn</title>
+<!--    <link rel="stylesheet" href="style.css" type="text/css"> -->
+    <style type="text/css">
+        html, body {
+            height: 100%;
+        }
+        #map {
+            width: 100%;
+            height: 80%;
+            border: 1px solid black;
+        }
+        .olPopup p { margin:0px; font-size: .9em;}
+        .olPopup h2 { font-size:1.2em; }
+    </style>
+<!--    <script src="OpenLayers.js"></script> -->
+    <script src="http://code.jquery.com/jquery-1.8.2.js"></script>
+    <script src="parkinglots.js"></script>
+    <script src="jquery-csv.js"></script> 
+    <script src="OpenLayers.js"></script>
+    <script type="text/javascript">
+        var map, select;
+
+        function loadParkingData(){
+            var xhr = new XMLHttpRequest();
+            xhr.onreadystatechange = function()
+            {
+                if (xhr.readyState== 4 && xhr.status == 200){
+                    document.getElementById("content").innerHTML = xhr.responseText;
+                    var tableString = "<table>";
+                    array = $.csv.toArrays(xhr.responseText);
+                    for (var i = 0; i < array.length; i++) {
+                        innerArray = array[i];
+                        tableString = tableString.concat("<tr>");
+                        for (var j = 0; j < innerArray.length; j++){
+                            tableString = tableString.concat("<td>");
+                            tableString = tableString.concat(innerArray[j]);
+                            tableString = tableString.concat("</td>");
+                        }
+                        tableString = tableString.concat("</tr>");
+                    }
+                    tableString = tableString.concat("</table>");
+                    document.getElementById("content").innerHTML = tableString;
+                }
+            }
+            xhr.open("GET", "newest.csv", true);
+            xhr.send(null);
+        }
+        function initOsm(){
+            var options = {
+                projection: new OpenLayers.Projection("EPSG:900913"),
+                displayProjection: new OpenLayers.Projection("EPSG:4326")
+            };
+            map = new OpenLayers.Map('map', options);
+            var mapnik = new OpenLayers.Layer.OSM("OpenStreetMap (Mapnik)");
+            
+            styleMap = new OpenLayers.StyleMap({'default':{
+                        label : "${label}",
+                        fontColor: "black",
+                        fontSize: "14px",
+                        fontWeight: "bold",
+                        labelAlign: "${labelAlign}",
+                        pointRadius: 7,
+						fillColor: "white",
+						strokeColor: "white",
+                        labelXOffset : "0",
+                        labelYOffset : "0"
+                    }});
+
+            map.addLayers([mapnik]);
+ 
+            var lonLat = new OpenLayers.LonLat(8.75456929206848, 51.71960448493701 )
+                                 .transform(
+                                     new OpenLayers.Projection("EPSG:4326"), // transform from WGS 1984
+                                      map.getProjectionObject() // to Spherical Mercator Projection
+                                 );
+            map.setCenter(lonLat, 15);
+        }
+        function init(){
+            loadParkingData();
+            initOsm();
+        }
+    </script>
+  </head>
+  <body onload="init()">
+    <h1 id="title">Parken in Paderborn</h1>
+    <a href="newest.csv">newest.csv</a>
+    <div id="map" class="map"></div>
+    <div id="content"></div>
+    <div id="libs"><a href="http://wiki.openstreetmap.org/wiki/OpenLayers">OpenLayers</a>, <a href="https://code.google.com/p/jquery-csv/">jquery-csv</a>, <a href="http://code.jquery.com/">jQuery</a></div>
+  </body>
+</html>
+

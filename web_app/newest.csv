@@ -1,0 +1,14 @@
+count,timestamp,_id,name,free
+810,2014-12-14 17:27:19,P1,Königsplatz,329
+290,2014-12-14 17:27:19,P2,Florianstraße,0
+540,2014-12-14 17:27:19,P3,Neuhäuser Tor,307
+670,2014-12-14 17:27:19,P4,Paderhalle / Maspernplatz,0
+540,2014-12-14 17:27:19,P5,Rolandsweg,0
+500,2014-12-14 17:27:19,P6,Libori-Galerie,0
+290,2014-12-14 17:27:19,P7,Le-Mans-Wall / Liboriberg,10
+170,2014-12-14 17:27:19,P8,Volksbank / Theater,17
+150,2014-12-14 17:27:19,P9,Domplatz,nicht im Parkleitsystem
+140,2014-12-14 17:27:19,P10,Westernmauer,nicht im Parkleitsystem
+40,2014-12-14 17:27:19,P11,Am Westerntor,nicht im Parkleitsystem
+147,2014-12-14 17:27:19,P12,Rathenaustraße,nicht im Parkleitsystem
+89,2014-12-14 17:27:19,P13,Hauptbahnhof,nicht im Parkleitsystem

@@ -1,2 +1,4 @@
 *.pyc
 *__.py
+.sass-cache/
+_site/
