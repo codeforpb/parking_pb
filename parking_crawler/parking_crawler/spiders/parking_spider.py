@@ -72,8 +72,8 @@ class ParkingSpider(BaseSpider):
             "url": "http://www.paderborn.de/microsite/asp/parken_in_der_city/Parkplatz_Rathenaustrasse.php"
         },
         "P13": {
-            "lat": 51.71270476048044,
-            "lon": 8.738036155700684,
+            "lat": 51.71248538781291,
+            "lon": 8.737328052520752,
             "url": "http://www.paderborn.de/microsite/asp/parken_in_der_city/parkplatz_Hauptbahnhof.php"
         }
     }
