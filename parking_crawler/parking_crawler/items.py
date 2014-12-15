@@ -6,3 +6,6 @@ class ParkingCrawlerItem(Item):
     count     = Field()
     free      = Field()
     timestamp = Field()
+    lat       = Field()
+    lon       = Field()
+    url       = Field()
