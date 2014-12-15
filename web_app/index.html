@@ -27,6 +27,7 @@ title: Parken in Paderborn
     <script src="OpenLayers.js"></script>
     <script type="text/javascript">
         var map, select, markers;
+        var red = '#f00', yellow = '#ff0', green = '#0f0', black = '#000', white = '#fff';
 
         function transformCoordinates(lon, lat){
             var lonLat = new OpenLayers.LonLat(lon, lat)
@@ -45,25 +46,15 @@ title: Parken in Paderborn
 
             var vectorLayer = new OpenLayers.Layer.Vector("Simple Geometry", {
                 styleMap: new OpenLayers.StyleMap({'default':{
-                    strokeColor: "#00FF00",
-                    strokeOpacity: 1,
-                    strokeWidth: 3,
-                    fillColor: "#FF5500",
-                    fillOpacity: 0.5,
-                    pointRadius: 15,
                     pointerEvents: "visiblePainted",
                     // label with \n linebreaks
                     label : "${free}/${count}",
-                    
-                    fontColor: "${favColor}",
+                    fontColor: black,
                     fontSize: "12px",
                     fontFamily: "Courier New, monospace",
                     fontWeight: "bold",
-                    labelAlign: "${align}",
-                    labelXOffset: "${xOffset}",
-                    labelYOffset: "${yOffset}",
-                    labelOutlineColor: "white",
-                    labelOutlineWidth: 3
+                    labelOutlineColor: "${color}",
+                    labelOutlineWidth: 6
                 }}),
                 renderers: renderer
             });
@@ -89,26 +80,31 @@ title: Parken in Paderborn
                     for (var i = 0; i < array.length; i++) {
                         var lat = array[i].lat;
                         var lon = array[i].lon;
+                        var free = array[i].free;
+                        var count = array[i].count;
+
                         tableString = tableString.concat("<tr>");
                         tableString = tableString.concat("<td>" + array[i]._id + "</td>");
                         tableString = tableString.concat("<td>" + array[i].name + "</td>");
                         tableString = tableString.concat("<td>" + array[i].timestamp + "</td>");
-                        tableString = tableString.concat("<td>" + array[i].free + "/" + array[i].count + "</td>");
+                        tableString = tableString.concat("<td>" + free + "/" + count + "</td>");
                         tableString = tableString.concat("<td>" + lat + "," + lon + "</td>");
                         tableString = tableString.concat("</tr>");
 
                         var point = new OpenLayers.Geometry.Point(lon,lat).transform(new OpenLayers.Projection("EPSG:4326"),map.getProjectionObject());
                         var pointFeature = new OpenLayers.Feature.Vector(point);
+                        var color;
+                        if(free == '?'){ color = white; }
+                        else if (free/count < 0.25) { color = red; }
+                        else if (free/count < 0.75) { color = yellow; }
+                        else { color = green; }
                         pointFeature.attributes = {
                             name: array[i].name,
                             free: array[i].free,
-                            count: array[i].count
+                            count: array[i].count,
+                            color: color
                         };
                         vectorLayer.addFeatures([pointFeature]);
-
-                        var coors = transformCoordinates(lon, lat);
-                        var marker = new OpenLayers.Marker(coors,icon.clone());
-                        markers.addMarker(marker);
                     }
                     tableString = tableString.concat("</table>");
                     document.getElementById("content").innerHTML = tableString;
