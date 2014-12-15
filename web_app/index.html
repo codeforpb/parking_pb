@@ -40,6 +40,34 @@ title: Parken in Paderborn
 
         function loadParkingData(map,mapnik){
             var xhr = new XMLHttpRequest();
+            var renderer = OpenLayers.Util.getParameters(window.location.href).renderer;
+            renderer = (renderer) ? [renderer] : OpenLayers.Layer.Vector.prototype.renderers;
+
+            var vectorLayer = new OpenLayers.Layer.Vector("Simple Geometry", {
+                styleMap: new OpenLayers.StyleMap({'default':{
+                    strokeColor: "#00FF00",
+                    strokeOpacity: 1,
+                    strokeWidth: 3,
+                    fillColor: "#FF5500",
+                    fillOpacity: 0.5,
+                    pointRadius: 15,
+                    pointerEvents: "visiblePainted",
+                    // label with \n linebreaks
+                    label : "${free}/${count}",
+                    
+                    fontColor: "${favColor}",
+                    fontSize: "12px",
+                    fontFamily: "Courier New, monospace",
+                    fontWeight: "bold",
+                    labelAlign: "${align}",
+                    labelXOffset: "${xOffset}",
+                    labelYOffset: "${yOffset}",
+                    labelOutlineColor: "white",
+                    labelOutlineWidth: 3
+                }}),
+                renderers: renderer
+            });
+
             xhr.onreadystatechange = function()
             {
                 if (xhr.readyState== 4 && xhr.status == 200){
@@ -69,6 +97,15 @@ title: Parken in Paderborn
                         tableString = tableString.concat("<td>" + lat + "," + lon + "</td>");
                         tableString = tableString.concat("</tr>");
 
+                        var point = new OpenLayers.Geometry.Point(lon,lat).transform(new OpenLayers.Projection("EPSG:4326"),map.getProjectionObject());
+                        var pointFeature = new OpenLayers.Feature.Vector(point);
+                        pointFeature.attributes = {
+                            name: array[i].name,
+                            free: array[i].free,
+                            count: array[i].count
+                        };
+                        vectorLayer.addFeatures([pointFeature]);
+
                         var coors = transformCoordinates(lon, lat);
                         var marker = new OpenLayers.Marker(coors,icon.clone());
                         markers.addMarker(marker);
@@ -76,6 +113,10 @@ title: Parken in Paderborn
                     tableString = tableString.concat("</table>");
                     document.getElementById("content").innerHTML = tableString;
                     map.addLayer(markers);
+
+                    vectorLayer.addFeatures([pointFeature]);
+
+                    map.addLayer(vectorLayer);
                 }
             }
             xhr.open("GET", "newest.json", true);
