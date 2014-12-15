@@ -23,7 +23,6 @@ title: Parken in Paderborn
     </style>
 <!--    <script src="OpenLayers.js"></script> -->
     <script src="http://code.jquery.com/jquery-1.8.2.js"></script>
-    <script src="parkinglots.js"></script>
     <script src="jquery-csv.js"></script> 
     <script src="OpenLayers.js"></script>
     <script type="text/javascript">
@@ -39,15 +38,15 @@ title: Parken in Paderborn
                     tableString = tableString.concat("<th>_id</th>");
                     tableString = tableString.concat("<th>name</th>");
                     tableString = tableString.concat("<th>timestamp</th>");
-                    tableString = tableString.concat("<th>free</th>");
-                    tableString = tableString.concat("<th>count</th>");
+                    tableString = tableString.concat("<th>free/count</th>");
+                    tableString = tableString.concat("<th>lat, lon</th>");
                     for (var i = 0; i < array.length; i++) {
                         tableString = tableString.concat("<tr>");
                         tableString = tableString.concat("<td>" + array[i]._id + "</td>");
                         tableString = tableString.concat("<td>" + array[i].name + "</td>");
                         tableString = tableString.concat("<td>" + array[i].timestamp + "</td>");
-                        tableString = tableString.concat("<td>" + array[i].free + "</td>");
-                        tableString = tableString.concat("<td>" + array[i].count + "</td>");
+                        tableString = tableString.concat("<td>" + array[i].free + "/" + array[i].count + "</td>");
+                        tableString = tableString.concat("<td>" + array[i].lat + "," + array[i].lon + "</td>");
                         tableString = tableString.concat("</tr>");
                     }
                     tableString = tableString.concat("</table>");
@@ -99,6 +98,7 @@ title: Parken in Paderborn
     <div id="map" class="map"></div>
     <div id="content"></div>
     <div id="libs"><a href="http://wiki.openstreetmap.org/wiki/OpenLayers">OpenLayers</a>, <a href="https://code.google.com/p/jquery-csv/">jquery-csv</a>, <a href="http://code.jquery.com/">jQuery</a></div>
+    <div id="explanations"><p>"?" heißt, dass ein Parkplatz nicht im Parkleitsystem erfasst ist.</p></div>
   </body>
 </html>
 
