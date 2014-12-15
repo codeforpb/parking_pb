@@ -28,6 +28,16 @@ title: Parken in Paderborn
     <script type="text/javascript">
         var map, select, markers;
 
+        function transformCoordinates(lon, lat){
+            var lonLat = new OpenLayers.LonLat(lon, lat)
+                                 .transform(
+                                     new OpenLayers.Projection("EPSG:4326"), // transform from WGS 1984
+                                      map.getProjectionObject() // to Spherical Mercator Projection
+                                 );
+
+            return lonLat;
+        }
+
         function loadParkingData(map,mapnik){
             var xhr = new XMLHttpRequest();
             xhr.onreadystatechange = function()
@@ -59,7 +69,8 @@ title: Parken in Paderborn
                         tableString = tableString.concat("<td>" + lat + "," + lon + "</td>");
                         tableString = tableString.concat("</tr>");
 
-                        var marker = new OpenLayers.Marker(new OpenLayers.LonLat(lon,lat),icon.clone());
+                        var coors = transformCoordinates(lon, lat);
+                        var marker = new OpenLayers.Marker(coors,icon.clone());
                         markers.addMarker(marker);
                     }
                     tableString = tableString.concat("</table>");
@@ -93,12 +104,8 @@ title: Parken in Paderborn
 
             map.addLayer(mapnik);
  
-            var lonLat = new OpenLayers.LonLat(8.75456929206848, 51.71960448493701 )
-                                 .transform(
-                                     new OpenLayers.Projection("EPSG:4326"), // transform from WGS 1984
-                                      map.getProjectionObject() // to Spherical Mercator Projection
-                                 );
-            map.setCenter(lonLat, 0);
+            var lonLat = transformCoordinates(8.75456929206848, 51.71960448493701);
+            map.setCenter(lonLat, 15);
 
             loadParkingData(map,mapnik);
         }
