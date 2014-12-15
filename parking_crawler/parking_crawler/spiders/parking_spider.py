@@ -91,7 +91,7 @@ class ParkingSpider(BaseSpider):
             _id = ids[index]
             item["_id"]       = _id
             item["name"]      = names[index]
-            free = frees[index] if ("nicht im Parkleitsystem" == frees[index]) else "?"
+            free = frees[index] if ("nicht im Parkleitsystem" != frees[index]) else "?"
             item["free"]      = x = free
             item["count"]     = counts[index]
             item["timestamp"] = timestamp
