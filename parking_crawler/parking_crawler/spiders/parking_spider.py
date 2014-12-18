@@ -17,8 +17,8 @@ class ParkingSpider(BaseSpider):
             "url": "http://www.paderborn.de/microsite/asp/parken_in_der_city/TG_Koenigsplatz.php"
         },
         "P2": {
-            "lat": 51.71694575625038,
-            "lon": 8.747949600219725,
+            "lat": 51.715024727501714,
+            "lon": 8.743523955345154,
             "url": "http://www.paderborn.de/microsite/asp/parken_in_der_city/PP_Florianstrasse.php"
         },
         "P3": {
