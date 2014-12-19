@@ -27,96 +27,20 @@ title: Parken in Paderborn
     <script src="OpenLayers.js"></script>
     <script type="text/javascript">
         var map, select, markers;
+        var projection = new OpenLayers.Projection("EPSG:4326");
 
-        function transformCoordinates(lon, lat){
-            var lonLat = new OpenLayers.LonLat(lon, lat)
-                                 .transform(
-                                     new OpenLayers.Projection("EPSG:4326"), // transform from WGS 1984
-                                      map.getProjectionObject() // to Spherical Mercator Projection
-                                 );
-
-            return lonLat;
-        }
-
-        function loadParkingData(map,mapnik){
-            var xhr = new XMLHttpRequest();
-            var renderer = OpenLayers.Util.getParameters(window.location.href).renderer;
-            renderer = (renderer) ? [renderer] : OpenLayers.Layer.Vector.prototype.renderers;
-
-            var vectorLayer = new OpenLayers.Layer.Vector("Simple Geometry", {
-                styleMap: new OpenLayers.StyleMap({'default':{
+        var styleMap = new OpenLayers.StyleMap({'default':{
                     pointerEvents: "visiblePainted",
                     externalGraphic: "/img/parking_lot_marker_${bg}.png",
                     graphicWidth: 64,
                     graphicHeight: 18,
-                    // label with \n linebreaks
                     label : '${free}/${count}',
                     fontColor: '#000',
                     fontSize: "12px",
                     fontFamily: "Courier New, monospace",
                     fontWeight: "bold"
-                }}),
-                renderers: renderer
-            });
+                }});
 
-            xhr.onreadystatechange = function()
-            {
-                if (xhr.readyState== 4 && xhr.status == 200){
-                    var array = JSON.parse(xhr.responseText);
-                    var tableString = "<table>"
-                    var size = new OpenLayers.Size(50,18);
-                    var offset = new OpenLayers.Pixel(-(size.w/2), -size.h);
- 
-                    markers = new OpenLayers.Layer.Markers( "Markers" );
-
-                    map.addControl(new OpenLayers.Control.LayerSwitcher());
-
-                    tableString = tableString.concat("<th>_id</th>");
-                    tableString = tableString.concat("<th>name</th>");
-                    tableString = tableString.concat("<th>timestamp</th>");
-                    tableString = tableString.concat("<th>free/count</th>");
-                    tableString = tableString.concat("<th>lat, lon</th>");
-                    for (var i = 0; i < array.length; i++) {
-                        var lat = array[i].lat;
-                        var lon = array[i].lon;
-                        var free = array[i].free;
-                        var count = array[i].count;
-
-                        tableString = tableString.concat("<tr>");
-                        tableString = tableString.concat("<td>" + array[i]._id + "</td>");
-                        tableString = tableString.concat("<td>" + array[i].name + "</td>");
-                        tableString = tableString.concat("<td>" + array[i].timestamp + "</td>");
-                        tableString = tableString.concat("<td>" + free + "/" + count + "</td>");
-                        tableString = tableString.concat("<td>" + lat + "," + lon + "</td>");
-                        tableString = tableString.concat("</tr>");
-
-                        var point = new OpenLayers.Geometry.Point(lon,lat).transform(new OpenLayers.Projection("EPSG:4326"),map.getProjectionObject());
-                        var pointFeature = new OpenLayers.Feature.Vector(point);
-                        var color;
-                        if(free == '?'){ color = 'white'; }
-                        else if (free/count < 0.25) { color = 'red'; }
-                        else if (free/count < 0.75) { color = 'yellow'; }
-                        else { color = 'green'; }
-                        pointFeature.attributes = {
-                            name: array[i].name,
-                            free: array[i].free,
-                            count: array[i].count,
-                            bg: color
-                        };
-                        vectorLayer.addFeatures([pointFeature]);
-                    }
-                    tableString = tableString.concat("</table>");
-                    document.getElementById("content").innerHTML = tableString;
-                    map.addLayer(markers);
-
-                    vectorLayer.addFeatures([pointFeature]);
-
-                    map.addLayer(vectorLayer);
-                }
-            }
-            xhr.open("GET", "newest.json", true);
-            xhr.send(null);
-        }
         function init(){
             var options = {
                 projection: new OpenLayers.Projection("EPSG:900913"),
@@ -124,20 +48,6 @@ title: Parken in Paderborn
             };
             map = new OpenLayers.Map('map', options);
             var mapnik = new OpenLayers.Layer.OSM("OpenStreetMap (Mapnik)");
-            
-            styleMap = new OpenLayers.StyleMap({'default':{
-                        label : "${label}",
-                        fontColor: "black",
-                        fontSize: "14px",
-                        fontWeight: "bold",
-                        labelAlign: "${labelAlign}",
-                        pointRadius: 7,
-						fillColor: "white",
-						strokeColor: "white",
-                        labelXOffset : "0",
-                        labelYOffset : "0"
-                    }});
-
             map.addLayer(mapnik);
  
             var lonLat = transformCoordinates(8.75456929206848, 51.71960448493701);
@@ -145,15 +55,93 @@ title: Parken in Paderborn
 
             loadParkingData(map,mapnik);
         }
-    </script>
+
+        function transformCoordinates(lon, lat){
+            var projectionObj =  map.getProjectionObject();
+            return new OpenLayers.LonLat(lon, lat)
+                                 .transform(projection, projectionObj);
+        }
+
+        function loadParkingData(map,mapnik){
+            var xhr = new XMLHttpRequest();
+
+
+
+
+            xhr.onreadystatechange = function()
+            {
+                if (xhr.readyState== 4 && xhr.status == 200){
+                    showParkingData(xhr.responseText);
+                }
+            }
+            xhr.open("GET", "newest.json", true);
+            xhr.send(null);
+        }
+
+        function showParkingData(responseText){
+            var renderer = OpenLayers.Util.getParameters(window.location.href).renderer;
+            renderer = (renderer) ? [renderer] : OpenLayers.Layer.Vector.prototype.renderers;
+
+            var vectorLayer = new OpenLayers.Layer.Vector("Parkplätze", {
+                styleMap: styleMap,
+                renderers: renderer
+            });
+
+            var array = JSON.parse(responseText);
+            var size = new OpenLayers.Size(50,18);
+            var offset = new OpenLayers.Pixel(-(size.w/2), -size.h);
+ 
+            map.addControl(new OpenLayers.Control.LayerSwitcher());
+
+            for (var i = 0; i < array.length; i++) {
+                var parkingLot = array[i];
+                addParkingLotToMap(vectorLayer, parkingLot);
+            }
+
+            map.addLayer(vectorLayer);
+        }
+
+       function addParkingLotToMap(vectorLayer, parkingLot){
+             var free = parkingLot.free;
+             var count = parkingLot.count;
+             var projectionObj =  map.getProjectionObject();
+
+             var point = new OpenLayers.Geometry.Point(parkingLot.lon, parkingLot.lat).transform(projection,projectionObj);
+             var pointFeature = new OpenLayers.Feature.Vector(point);
+             pointFeature.attributes = {
+                name: parkingLot.name,
+                free: parkingLot.free,
+                count: parkingLot.count,
+                bg: getColor(free, count)
+            };
+            vectorLayer.addFeatures([pointFeature]);
+       }
+
+        function getColor(free, count){
+            if(free == '?'){
+                return 'white'; 
+            }
+
+            var freeRatio = free/count;                 
+            if (freeRatio < 0.25) {
+                return 'red';
+            }
+            else if (freeRatio < 0.75) {
+                return 'yellow';
+            }
+            else {
+                return 'green';
+            }
+        }
+     </script>
   </head>
   <body onload="init()">
     <h1 id="title">Parken in Paderborn</h1>
-    <a href="newest.csv">newest.csv</a>
     <div id="map" class="map"></div>
+    <div id="explanations"><p>"?" heißt, dass ein Parkplatz nicht im Parkleitsystem erfasst ist.</p></div>
     <div id="content"></div>
     <div id="libs"><a href="http://wiki.openstreetmap.org/wiki/OpenLayers">OpenLayers</a>, <a href="https://code.google.com/p/jquery-csv/">jquery-csv</a>, <a href="http://code.jquery.com/">jQuery</a></div>
-    <div id="explanations"><p>"?" heißt, dass ein Parkplatz nicht im Parkleitsystem erfasst ist.</p></div>
+
   </body>
 </html>
 

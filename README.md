@@ -3,6 +3,8 @@ Parken in Paderborn
 
 Inspiriert von http://codefor.de/projekte/2014-04-19-dd-freieparkplaetze.html
 
+Um die App auf einem Server zu hosten ist eine Installation von [https://scrapy.org](scrapy) notwendig, damit regelmäßig neue Daten geholt werden können. Die Web-App selbst wurde mit jekyll erstellt, damit diese lokal getestet werden kann. Sie ist jedoch von jekyll-Funktionen (templating, etc.) unabhängig.
+
 Crawler
 -------
 
