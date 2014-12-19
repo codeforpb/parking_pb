@@ -27,7 +27,6 @@ title: Parken in Paderborn
     <script src="OpenLayers.js"></script>
     <script type="text/javascript">
         var map, select, markers;
-        var red = '#f00', yellow = '#ff0', green = '#0f0', black = '#000', white = '#fff';
 
         function transformCoordinates(lon, lat){
             var lonLat = new OpenLayers.LonLat(lon, lat)
@@ -47,14 +46,15 @@ title: Parken in Paderborn
             var vectorLayer = new OpenLayers.Layer.Vector("Simple Geometry", {
                 styleMap: new OpenLayers.StyleMap({'default':{
                     pointerEvents: "visiblePainted",
+                    externalGraphic: "/img/parking_lot_marker_${bg}.png",
+                    graphicWidth: 64,
+                    graphicHeight: 18,
                     // label with \n linebreaks
-                    label : "${free}/${count}",
-                    fontColor: black,
+                    label : '${free}/${count}',
+                    fontColor: '#000',
                     fontSize: "12px",
                     fontFamily: "Courier New, monospace",
-                    fontWeight: "bold",
-                    labelOutlineColor: "${color}",
-                    labelOutlineWidth: 6
+                    fontWeight: "bold"
                 }}),
                 renderers: renderer
             });
@@ -64,9 +64,8 @@ title: Parken in Paderborn
                 if (xhr.readyState== 4 && xhr.status == 200){
                     var array = JSON.parse(xhr.responseText);
                     var tableString = "<table>"
-                    var size = new OpenLayers.Size(21,25);
+                    var size = new OpenLayers.Size(50,18);
                     var offset = new OpenLayers.Pixel(-(size.w/2), -size.h);
-                    var icon = new OpenLayers.Icon('img/marker-green.png',size,offset);
  
                     markers = new OpenLayers.Layer.Markers( "Markers" );
 
@@ -94,15 +93,15 @@ title: Parken in Paderborn
                         var point = new OpenLayers.Geometry.Point(lon,lat).transform(new OpenLayers.Projection("EPSG:4326"),map.getProjectionObject());
                         var pointFeature = new OpenLayers.Feature.Vector(point);
                         var color;
-                        if(free == '?'){ color = white; }
-                        else if (free/count < 0.25) { color = red; }
-                        else if (free/count < 0.75) { color = yellow; }
-                        else { color = green; }
+                        if(free == '?'){ color = 'white'; }
+                        else if (free/count < 0.25) { color = 'red'; }
+                        else if (free/count < 0.75) { color = 'yellow'; }
+                        else { color = 'green'; }
                         pointFeature.attributes = {
                             name: array[i].name,
                             free: array[i].free,
                             count: array[i].count,
-                            color: color
+                            bg: color
                         };
                         vectorLayer.addFeatures([pointFeature]);
                     }
