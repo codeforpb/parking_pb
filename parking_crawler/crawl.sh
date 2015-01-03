@@ -9,3 +9,4 @@ crawlDate=$(date +%s)
 scrapy crawl pspider -o $crawlDate.json -t json
 tail -n +2 pspider_log.csv >> $COMPLETE_LOG_FILE
 mv $crawlDate.json ../web_app/newest.json
+cp $COMPLETE_LOG_FILE ../web_app/$COMPLETE_LOG_FILE
