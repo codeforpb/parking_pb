@@ -1,5 +1,6 @@
 #!/bin/bash
+cd /opt/parking_crawler/
 while [ 1 ]; do
-  /usr/share/nginx/html/parking_crawler/crawl.sh /usr/share/nginx/html
-  sleep 5
+	/opt/parking_crawler/crawl.sh /srv/crawled_parking_data
+	sleep 15m
 done
