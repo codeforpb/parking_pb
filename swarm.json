@@ -1,0 +1,34 @@
+{
+    "app_name": "parking_pb",
+    "services": [
+        {
+            "service_name": "service1",
+            "components": [
+                {
+                    "component_name": "component-a",
+                    "image": "registry.giantswarm.io/giantswarm/customimage",
+                    "ports": [ "1337/tcp" ],
+                    "domains": { "helloworld.gigantic.io": "1337" }
+                }
+            ]
+        },
+        {
+            "service_name": "service2",
+            "components": [
+                {
+                    "component_name": "component-x",
+                    "image": "registry.giantswarm.io/giantswarm/customimage",
+                    "ports": [ "1337/tcp" ],
+                    "dependencies": [
+                        { "name": "component-y", "port": 6379 }
+                    ]                
+                },
+                {
+                    "component_name": "component-y",
+                    "image": "redis",
+                    "ports": [ "6379/tcp" ]
+                }
+            ]
+        }
+    ]
+}
