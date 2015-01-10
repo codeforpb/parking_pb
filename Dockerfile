@@ -7,6 +7,7 @@
 # Dockerfile for scrapy
 # https://registry.hub.docker.com/u/vimagick/scrapy/dockerfile/
 #
+MAINTAINER lippertsjan@gmail.com
 
 FROM ubuntu:14.04
 
@@ -18,7 +19,6 @@ RUN echo "deb http://nginx.org/packages/mainline/debian/ wheezy nginx" >> /etc/a
 RUN mkdir -p /var/log/supervisor /usr/share/nginx/html /opt/parking_crawler /usr/share/nginx/html /srv/crawled_parking_data
 
 # copy some application settings to container
-COPY supervisord.conf /etc/supervisor/conf.d/supervisord.conf
 COPY start.sh /usr/bin/start.sh
 COPY parking_crawler /opt/parking_crawler
 
