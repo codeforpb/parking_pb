@@ -1,13 +1,15 @@
-from scrapy.spider         import BaseSpider
-from scrapy.selector       import Selector
-from parking_crawler.items import ParkingCrawlerItem
-from scrapy.http		   import Request
+# -*- coding: utf-8 -*-
+import scrapy
 import time
+from parking_crawler.items import ParkingCrawlerItem
+from scrapy.selector import Selector
 
-class ParkingSpider(BaseSpider):
-    name 		= "parking_spider"
-    allowed_domains	= ["paderborn.de"]
-    start_urls	= ["http://www9.paderborn.de/ParkInfoSPB/ParkInfoSPB/default.aspx"]
+class ParkingSpider(scrapy.Spider):
+    name = "pspider"
+    allowed_domains = ["paderborn.de"]
+    start_urls = (
+        'http://www9.paderborn.de/ParkInfoSPB/ParkInfoSPB/default.aspx',
+    )
 
     global parkingLots
     parkingLots = {
@@ -78,17 +80,16 @@ class ParkingSpider(BaseSpider):
         }
     }
 
-
     def parse(self, response):
-    	hxs 	  = Selector(response)
-        ids       = hxs.xpath('//tr/td[1]//span//text()').extract()
-    	names     = hxs.xpath('//tr/td[3]//a//text()').extract()
-    	counts    = hxs.xpath('//tr/td[4]//span//text()').extract()
-    	frees 	  = hxs.xpath('//tr/td[5]//span//text()').extract()
-        timestamp = time.strftime("%Y-%m-%d %H:%M:%S")
-    	for index in range(len(ids)):
+        hxs       = Selector(response)
+        ids       = hxs.xpath("//tr/td[1]//span//text()").extract()
+        names     = hxs.xpath("//tr/td[3]//a//text()").extract()
+        counts    = hxs.xpath("//tr/td[4]//span//text()").extract()
+        frees     = hxs.xpath("//tr/td[5]//span//text()").extract()
+        timestamp = time.strftime("%Y-%m-%d %H:%M:%S +0000", time.gmtime())
+        for index in range(len(ids)):
             item = ParkingCrawlerItem()
-            _id = ids[index]
+            _id  = ids[index]
             item["_id"]       = _id
             item["name"]      = names[index]
             free = frees[index] if ("nicht im Parkleitsystem" != frees[index]) else "?"
@@ -98,5 +99,4 @@ class ParkingSpider(BaseSpider):
             item["lat"]       = parkingLots[_id]["lat"]
             item["lon"]       = parkingLots[_id]["lon"]
             item["url"]       = parkingLots[_id]["url"]
-    	    yield item
-
+            yield item

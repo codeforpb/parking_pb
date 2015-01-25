@@ -1,0 +1,2 @@
+#!/bin/bash
+exec /opt/parking_crawler/permanent_crawl.sh 

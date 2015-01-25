@@ -12,6 +12,11 @@ BOT_NAME = 'parking_crawler'
 
 SPIDER_MODULES = ['parking_crawler.spiders']
 NEWSPIDER_MODULE = 'parking_crawler.spiders'
+FIELDS_TO_EXPORT = ['_id', 'name', 'count', 'free', 'timestamp', 'lat', 'lon', 'url']
+INCLUDE_HEADERS_LINE = 'false'
+ITEM_PIPELINES = {'parking_crawler.pipelines.ParkingCrawlerPipeline': 300 }
+
+
 
 # Crawl responsibly by identifying yourself (and your website) on the user-agent
 #USER_AGENT = 'parking_crawler (+http://www.yourdomain.com)'

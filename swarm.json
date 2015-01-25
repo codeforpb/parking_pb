@@ -1,0 +1,16 @@
+{
+    "app_name": "parking_pb_monolith",
+    "services": [
+        {
+            "service_name": "parking_pb_monolith",
+            "components": [
+                {
+                    "component_name": "parking_monolith",
+                    "image": "registry.giantswarm.io/lippertsjan/parking_monolith:1.0.1",
+                    "ports": [ "80/tcp" ],
+                    "domains": { "parking_pb.gigantic.io": "80" }
+                }
+            ]
+        }
+    ]
+}

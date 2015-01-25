@@ -1,11 +1,19 @@
-from scrapy.item import Item, Field
+# -*- coding: utf-8 -*-
 
-class ParkingCrawlerItem(Item):
-    _id       = Field()
-    name      = Field()
-    count     = Field()
-    free      = Field()
-    timestamp = Field()
-    lat       = Field()
-    lon       = Field()
-    url       = Field()
+# Define here the models for your scraped items
+#
+# See documentation in:
+# http://doc.scrapy.org/en/latest/topics/items.html
+
+import scrapy
+
+
+class ParkingCrawlerItem(scrapy.Item):
+    _id       = scrapy.Field()
+    name      = scrapy.Field()
+    count     = scrapy.Field()
+    free      = scrapy.Field()
+    timestamp = scrapy.Field()
+    lat       = scrapy.Field()
+    lon       = scrapy.Field()
+    url       = scrapy.Field()

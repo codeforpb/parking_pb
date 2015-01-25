@@ -3,7 +3,7 @@
 
         var styleMap = new OpenLayers.StyleMap({'default':{
                     pointerEvents: "visiblePainted",
-                    externalGraphic: "/img/parking_lot_marker_${bg}.png",
+                    externalGraphic: "img/parking_lot_marker_${bg}.png",
                     graphicWidth: 64,
                     graphicHeight: 18,
                     label : '${free}/${count}',
