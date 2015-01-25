@@ -1,32 +1,14 @@
 {
-    "app_name": "parking_pb",
+    "app_name": "parking_pb_monolith",
     "services": [
         {
-            "service_name": "service1",
+            "service_name": "parking_pb_monolith",
             "components": [
                 {
-                    "component_name": "component-a",
-                    "image": "registry.giantswarm.io/giantswarm/customimage",
-                    "ports": [ "1337/tcp" ],
-                    "domains": { "helloworld.gigantic.io": "1337" }
-                }
-            ]
-        },
-        {
-            "service_name": "service2",
-            "components": [
-                {
-                    "component_name": "component-x",
-                    "image": "registry.giantswarm.io/giantswarm/customimage",
-                    "ports": [ "1337/tcp" ],
-                    "dependencies": [
-                        { "name": "component-y", "port": 6379 }
-                    ]                
-                },
-                {
-                    "component_name": "component-y",
-                    "image": "redis",
-                    "ports": [ "6379/tcp" ]
+                    "component_name": "parking_monolith",
+                    "image": "registry.giantswarm.io/lippertsjan/parking_monolith:1.0.1",
+                    "ports": [ "80/tcp" ],
+                    "domains": { "parking_pb.gigantic.io": "80" }
                 }
             ]
         }

@@ -7,7 +7,6 @@
 # Dockerfile for scrapy
 # https://registry.hub.docker.com/u/vimagick/scrapy/dockerfile/
 #
-MAINTAINER lippertsjan@gmail.com
 
 FROM ubuntu:14.04
 
@@ -16,15 +15,20 @@ RUN apt-key adv --keyserver hkp://keyserver.ubuntu.com:80 --recv 627220E7
 
 RUN echo 'deb http://archive.scrapy.org/ubuntu scrapy main' >/etc/apt/sources.list.d/scrapy.list
 RUN echo "deb http://nginx.org/packages/mainline/debian/ wheezy nginx" >> /etc/apt/sources.list
-RUN mkdir -p /var/log/supervisor /usr/share/nginx/html /opt/parking_crawler /usr/share/nginx/html /srv/crawled_parking_data
+RUN rm /etc/services
+RUN mkdir -p /var/log/supervisor /usr/share/nginx/html /opt/parking_crawler /usr/share/nginx/html /srv/crawled_parking_data /etc/services/nginx /etc/services/permanent_crawl
 
 # copy some application settings to container
 COPY start.sh /usr/bin/start.sh
 COPY parking_crawler /opt/parking_crawler
+COPY services/permanent_crawl /etc/services/permanent_crawl/run
+COPY services/nginx /etc/services/nginx/run
+
+RUN chmod +x /etc/services/permanent_crawl/run /etc/services/nginx/run
 
 ENV NGINX_VERSION 1.7.9-1~wheezy
 
-RUN apt-get update && apt-get install -y nginx=${NGINX_VERSION} python-pip scrapy-0.24 scrapyd supervisor && rm -rf /var/lib/apt/lists/*
+RUN apt-get update && apt-get install -y nginx=${NGINX_VERSION} python-pip scrapy-0.24 scrapyd supervisor daemontools-run && rm -rf /var/lib/apt/lists/*
 
 # forward request and error logs to docker log collector
 # RUN ln -sf /dev/stdout /var/log/nginx/access.log
@@ -32,7 +36,7 @@ RUN apt-get update && apt-get install -y nginx=${NGINX_VERSION} python-pip scrap
 
 VOLUME ["/var/cache/nginx"]
 
-EXPOSE 80 443
+EXPOSE 80
 
 COPY web_app /usr/share/nginx/html
 COPY web_app/index.html /usr/share/nginx/html/index.html.bak
@@ -40,4 +44,5 @@ RUN rm -f /usr/share/nginx/html/newest.json /usr/share/nginx/html/history.csv
 RUN ln -s /srv/crawled_parking_data/newest.json /usr/share/nginx/html/newest.json
 RUN ln -s /srv/crawled_parking_data/history.csv /usr/share/nginx/html/history.csv
 
-CMD ["/usr/bin/start.sh"]
+
+ENTRYPOINT ["/usr/bin/svscan", "/etc/services/"]

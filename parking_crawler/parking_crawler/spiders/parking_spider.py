@@ -86,7 +86,7 @@ class ParkingSpider(scrapy.Spider):
         names     = hxs.xpath("//tr/td[3]//a//text()").extract()
         counts    = hxs.xpath("//tr/td[4]//span//text()").extract()
         frees     = hxs.xpath("//tr/td[5]//span//text()").extract()
-        timestamp = time.strftime("%Y-%m-%d %H:%M:%S")
+        timestamp = time.strftime("%Y-%m-%d %H:%M:%S +0000", time.gmtime())
         for index in range(len(ids)):
             item = ParkingCrawlerItem()
             _id  = ids[index]

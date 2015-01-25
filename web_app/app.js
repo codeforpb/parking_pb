@@ -50,16 +50,7 @@
             xhr.send(null);
         }
 
-        function toTableRow(parkingLot){
-        	var result = "<tr><td>"
-        	.concat("<td>").concat(parkingLot.name).concat("</td>")
-        	.concat("<td>").concat(parkingLot.free).concat("/").concat(parkingLot.count).concat("</td>")
-        	.concat("<td>").concat(parkingLot.timestamp).concat("</td></tr>");
-        	return result;
-        }
-
         function showParkingData(responseText){
-        	var tableString = "<table>";
             var renderer = OpenLayers.Util.getParameters(window.location.href).renderer;
             renderer = (renderer) ? [renderer] : OpenLayers.Layer.Vector.prototype.renderers;
 
@@ -77,15 +68,9 @@
             for (var i = 0; i < array.length; i++) {
                 var parkingLot = array[i];
                 addParkingLotToMap(vectorLayer, parkingLot);
-                tableString = tableString.concat(toTableRow(parkingLot));
             }
 
-            tableString = tableString.concat("</table>")
-
-
             map.addLayer(vectorLayer);
-
-            document.getElementById("tableRep").innerHTML = tableString;
         }
 
        function addParkingLotToMap(vectorLayer, parkingLot){
