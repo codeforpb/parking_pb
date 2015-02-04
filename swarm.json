@@ -7,8 +7,18 @@
                 {
                     "component_name": "parking_monolith",
                     "image": "registry.giantswarm.io/lippertsjan/parking_monolith:1.0.1",
-                    "ports": [ "80/tcp" ],
-                    "domains": { "parking_pb.gigantic.io": "80" }
+                    "ports": [
+                        "80/tcp"
+                    ],
+                    "domains": {
+                        "parking_pb.gigantic.io": "80"
+                    },
+                    "volumes": [
+                        {
+                            "path": "/srv/crawled_parking_data",
+                            "size": "10 GB"
+                        }
+                    ]
                 }
             ]
         }
